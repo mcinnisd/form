@@ -1,0 +1,139 @@
+You are an expert in React Native, Expo, Node.js, Express, Zustand, Supabase, LangGraph, and OpenAI GPT-4o, specializing in AI-powered health coaching applications.
+
+## Project Overview
+You are developing a mobile AI companion that acts as a chatbot, personal assistant, and productivity tool for health coaching. The app consists of two main screens:
+1. **Chat Screen** – Displays an ongoing conversation history stored in Supabase.
+2. **Memory Screen** – Dynamically updates and stores long-term user memories, which can be edited or deleted by the user. The agent retrieves these memories to personalize responses.
+
+## Core Functionalities
+### Chat System
+- Implement a chat interface where users can send and receive messages in real-time.
+- Store conversation history in Supabase for long-term personalization.
+- Chat history should **not** be editable or searchable but should be referenced by the agent when responding to user queries.
+- The AI should retrieve relevant past messages if the user asks about a previous topic (e.g., “What did I say about tacos last week?”).
+
+### Memory System
+- Implement a **persistent memory storage** in Supabase where memories are stored as structured attributes.
+- Users can **edit** and **delete** memories in real-time via the Memory Screen.
+- Changes to memories should **not** retroactively modify past chat messages but should influence future responses.
+- The agent should proactively use memories for personalization without explicit user prompts.
+
+### AI Agent (LangGraph + OpenAI GPT-4o)
+- Use LangGraph to manage conversation flow and long-term memory integration.
+- Implement memory retrieval logic to surface **relevant** memories in responses dynamically.
+- Ensure agent responses are **context-aware**, considering chat history, user preferences, and health goals.
+- Focus initially on general health coaching conversations, with future extensibility for goal tracking.
+
+## Tech Stack Guidelines
+### Frontend (React Native + Expo)
+- Use **Expo Managed Workflow** for development and deployment.
+- Implement state management using **Zustand**.
+- Design UI components with React Native and maintain a clean, modular file structure.
+
+### Backend (Node.js + Express)
+- Set up an Express API to handle:
+  - Chat history storage and retrieval from Supabase.
+  - Memory creation, updates, and deletions.
+  - LLM interaction and response handling via LangGraph.
+
+### Supabase (Database & Authentication)
+- Store chat history and user memories in Supabase.
+- Use **Row Level Security (RLS)** to ensure user data privacy.
+- Optimize queries for real-time updates in the Memory Screen.
+
+### AI Interaction (LangGraph + OpenAI GPT-4o)
+- Use LangGraph to manage multi-step conversations.
+- Integrate OpenAI GPT-4o for health coaching responses.
+- Implement **automatic memory retrieval** for personalized replies.
+
+## Performance & Optimization
+- Minimize unnecessary re-renders by optimizing Zustand state management.
+- Implement pagination or lazy loading for large chat histories.
+- Use WebSockets or polling for real-time chat updates.
+
+## Expo Considerations
+- Start with an **Expo Managed Workflow** for rapid testing.
+- Use Expo libraries for device compatibility (e.g., SecureStore for token storage).
+- Plan for future native module integrations if needed.
+
+## Future Enhancements (NOT REQUIRED FOR MVP)
+- Implement **goal tracking** for health coaching.
+- Introduce different coaching styles (motivational, data-driven, casual).
+- Add voice-based interactions.
+
+
+## Implementation Details
+
+### Memory Structure
+
+**Attributes for each memory:**  
+**Answer:** Each memory should include a timestamp, category (e.g., diet, exercise, goals, preferences), a textual description, and an importance or priority level.  
+**Explanation:** These attributes help in sorting and filtering memories during retrieval. The timestamp provides temporal context, categories enable efficient indexing, and an importance level helps prioritize which memories to surface when personalizing responses.
+
+**Tagging/Categorization:**  
+**Answer:** Yes, memories should be tagged or categorized (e.g., diet, exercise, goals).  
+**Explanation:** Categorizing memories improves retrieval performance by allowing the system to quickly filter and access relevant memories based on user queries and conversation context.
+
+### Chat History Scope
+
+**Retention Duration:**  
+**Answer:** Retain the full chat history indefinitely for personalization, while planning to archive older messages as needed.  
+**Explanation:** Keeping the complete history ensures that the AI agent has access to all past interactions for context. Archiving older messages (e.g., via summarization) will help manage performance as the dataset grows.
+
+**Automatic Archiving/Cleanup:**  
+**Answer:** Implement an automatic archiving mechanism that summarizes and compresses older messages.  
+**Explanation:** Summarizing older chat data maintains key context while reducing the system’s load, ensuring efficient storage and faster retrieval without losing essential information.
+
+### Authentication Requirements
+
+**Authentication Method:**  
+**Answer:** Use email/password authentication as the baseline, with the option to add social authentication in future iterations.  
+**Explanation:** Email/password is simple and effective for an MVP, while social auth can be introduced later if user feedback indicates a need for more streamlined sign-up/sign-in processes.
+
+**Role-Based Access Control:**  
+**Answer:** Basic user authentication is sufficient for the MVP.  
+**Explanation:** Since the app is focused on individual health coaching, a simple authentication model meets current needs. More granular role-based access can be considered if additional user roles or administrative functions are required in the future.
+
+### AI Response Parameters
+
+**Response Length and Formatting Constraints:**  
+**Answer:** Set constraints on response length (e.g., maximum token count) and enforce a consistent formatting style.  
+**Explanation:** These measures ensure that responses are concise, clear, and within the LLM’s context limitations, enhancing readability and performance.
+
+**Content Filtering/Safety Measures:**  
+**Answer:** Implement basic content filtering and safety measures to prevent unsafe or inappropriate advice.  
+**Explanation:** Given the health-related context, filtering is essential to protect users from potentially harmful advice and to ensure compliance with relevant standards.
+
+**Maintaining Different Personas:**  
+**Answer:** Start with a single supportive health coach persona for the MVP, with the possibility to introduce additional personas (e.g., challenging, analytical) later.  
+**Explanation:** Focusing on one persona simplifies initial development and testing, while leaving room for future enhancements to cater to diverse user preferences.
+
+### Real-time Updates
+
+**Realtime Subscription vs. Polling:**  
+**Answer:** Use Supabase's real-time subscriptions for chat updates.  
+**Explanation:** Real-time subscriptions provide immediate updates, ensuring a seamless and responsive chat experience compared to polling, which can introduce latency.
+
+**Expected Concurrent User Load:**  
+**Answer:** Initially design for a modest load (tens to a few hundred concurrent users), with scalability in mind.  
+**Explanation:** This assumption is realistic for an MVP, while the architecture should remain flexible enough to handle increased loads as the user base grows.
+
+### Offline Functionality
+
+**Offline Capabilities:**  
+**Answer:** Implement basic offline capabilities such as caching recent chats and allowing memory edits when offline.  
+**Explanation:** Offline functionality enhances user experience by ensuring access to recent data and permitting interactions even during connectivity issues.
+
+**Message Queuing When Offline:**  
+**Answer:** Utilize local storage to queue messages and synchronize them with the backend once connectivity is restored.  
+**Explanation:** This approach prevents data loss during offline periods and ensures continuity in user interactions once the network is available.
+
+### Data Privacy
+
+**Health Data Privacy Regulations:**  
+**Answer:** Ensure compliance with relevant health data privacy regulations (e.g., HIPAA in the U.S., GDPR in Europe) based on the target user regions.  
+**Explanation:** Compliance is critical when handling sensitive health data to protect users and avoid legal complications.
+
+**End-to-End Encryption:**  
+**Answer:** Implement end-to-end encryption for messages.  
+**Explanation:** Encrypting messages enhances security by protecting sensitive information from unauthorized access, thereby increasing user trust and meeting industry best practices.
